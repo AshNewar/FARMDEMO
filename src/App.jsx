@@ -26,10 +26,9 @@ const theme = {
 
 const farmerDum = {
   "name": "Abhi",
-  "phone": 9394959695,
-  "village": "hjjedkedj",
+  "Plot/Survey/Khasra No": "jdjdjdj",
   "crop": "jhjdkje",
-  "kvk": "eheje",
+  "KVK Registration/Enrollment No": "eheje",
   "land": "edej"
 }
 
@@ -56,22 +55,19 @@ function FarmerProfilePage() {
           {farmer ? (
             <>
               <p><strong>Name:</strong> {farmer.name}</p>
-              <p><strong>Phone:</strong> {farmer.phone}</p>
-              <p><strong>Village:</strong> {farmer.village}</p>
+              <p><strong>Plot/Survey/Khasra No:</strong> {farmer["Plot/Survey/Khasra No"]}</p>
               <p><strong>Crops:</strong> {farmer.crop}</p>
               <p><strong>Land:</strong> {farmer.land}</p>
-              <p><strong>KVK:</strong> {farmer.kvk}</p>
-
+              <p><strong>KVK Registration/Enrollment No:</strong> {farmer["KVK Registration/Enrollment No"]}</p>
               <p><strong>UFI:</strong> {farmer.ufi}</p>
             </>
           ) : (
             <>
               <p><strong>Name:</strong> {farmerDum.name}</p>
-              <p><strong>Phone:</strong> {farmerDum.phone}</p>
-              <p><strong>Village:</strong> {farmerDum.village}</p>
+              <p><strong>Plot/Survey/Khasra No:</strong> {farmerDum["Plot/Survey/Khasra No"]}</p>
               <p><strong>Crops:</strong> {farmerDum.crop}</p>
               <p><strong>Land:</strong> {farmerDum.land}</p>
-              <p><strong>KVK:</strong> {farmerDum.kvk}</p>
+              <p><strong>KVK Registration/Enrollment No:</strong> {farmerDum["KVK Registration/Enrollment No"]}</p>
 
               <p><strong>UFI:</strong> {farmerDum.ufi}</p>
             </>
@@ -92,11 +88,10 @@ function FarmerProfilePage() {
 function RegisterFarmer() {
   const [farmer, setFarmer] = useState({
     name: "",
-    phone: "",
-    village: "",
+    "Plot/Survey/Khasra No": "",
     crop: "",
     land: "",
-    kvk: ""
+    "KVK Registration/Enrollment No": ""
   });
 
   const [generatedUFI, setGeneratedUFI] = useState(null);
