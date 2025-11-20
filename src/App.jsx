@@ -24,6 +24,15 @@ const theme = {
   bg: "#F4F6F0",
 };
 
+const farmerDum = {
+  "name": "Abhi",
+  "phone": 9394959695,
+  "village": "hjjedkedj",
+  "crop": "jhjdkje",
+  "kvk": "eheje",
+  "land": "edej"
+}
+
 // ------------------------------------------------------
 // PAGE: Farmer QR Profile Viewer
 // ------------------------------------------------------
@@ -56,7 +65,16 @@ function FarmerProfilePage() {
               <p><strong>UFI:</strong> {farmer.ufi}</p>
             </>
           ) : (
-            <p className="text-red-600 font-bold">No farmer found for ID: {id}</p>
+            <>
+              <p><strong>Name:</strong> {farmerDum.name}</p>
+              <p><strong>Phone:</strong> {farmerDum.phone}</p>
+              <p><strong>Village:</strong> {farmerDum.village}</p>
+              <p><strong>Crops:</strong> {farmerDum.crop}</p>
+              <p><strong>Land:</strong> {farmerDum.land}</p>
+              <p><strong>KVK:</strong> {farmerDum.kvk}</p>
+
+              <p><strong>UFI:</strong> {farmerDum.ufi}</p>
+            </>
           )}
         </div>
 
