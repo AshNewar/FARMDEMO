@@ -6,8 +6,13 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-r
 // Helper: UFI Generator
 // ------------------------------------------------------
 function generateUFI() {
-  const n = Math.floor(100000 + Math.random() * 900000); // 6-digit number
-  return `UFI-${n}`;
+  // Generate a 10-character alphanumeric ID (letters + numbers)
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let id = "UFI-";
+  for (let i = 0; i < 10; i++) {
+  id += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return id;
 }
 
 // ------------------------------------------------------
@@ -25,14 +30,11 @@ const theme = {
 function FarmerProfilePage() {
   const { id } = useParams();
 
-  const farmer = {
-    id: id || "UFI-000000",
-    name: "Ramesh Kumar",
-    phone: "+91 9876543210",
-    village: "Bhagalpur",
-    crop: "Wheat, Rice",
-    land: "2.5 acres",
-  };
+  // Load farmers from localStorage
+  const savedFarmers = JSON.parse(localStorage.getItem("farmers") || "[]");
+
+  // Match farmer by UFI
+  const farmer = savedFarmers.find((f) => f.ufi === id) || null;
 
   return (
     <div className="min-h-screen flex flex-col items-center p-6" style={{ backgroundColor: theme.bg }}>
@@ -42,12 +44,20 @@ function FarmerProfilePage() {
         </h1>
 
         <div className="p-4 rounded-xl mb-4" style={{ background: "#EAF5E5" }}>
-          <p><strong>Name:</strong> {farmer.name}</p>
-          <p><strong>Phone:</strong> {farmer.phone}</p>
-          <p><strong>Village:</strong> {farmer.village}</p>
-          <p><strong>Crops:</strong> {farmer.crop}</p>
-          <p><strong>Land:</strong> {farmer.land}</p>
-          <p><strong>UFI:</strong> {farmer.id}</p>
+          {farmer ? (
+            <>
+              <p><strong>Name:</strong> {farmer.name}</p>
+              <p><strong>Phone:</strong> {farmer.phone}</p>
+              <p><strong>Village:</strong> {farmer.village}</p>
+              <p><strong>Crops:</strong> {farmer.crop}</p>
+              <p><strong>Land:</strong> {farmer.land}</p>
+              <p><strong>KVK:</strong> {farmer.kvk}</p>
+
+              <p><strong>UFI:</strong> {farmer.ufi}</p>
+            </>
+          ) : (
+            <p className="text-red-600 font-bold">No farmer found for ID: {id}</p>
+          )}
         </div>
 
         <Link to="/" className="underline text-blue-600 text-center block mt-4">
@@ -68,14 +78,46 @@ function RegisterFarmer() {
     village: "",
     crop: "",
     land: "",
+    kvk: ""
   });
 
   const [generatedUFI, setGeneratedUFI] = useState(null);
+
+  // Load saved farmers
+  // Load saved farmers
+  const [savedFarmers, setSavedFarmers] = useState(
+    JSON.parse(localStorage.getItem("farmers") || "[]")
+  );
+
+  // Sync LocalStorage across browser tabs
+  React.useEffect(() => {
+    const syncHandler = (event) => {
+      if (event.key === "farmers") {
+        try {
+          const updated = JSON.parse(event.newValue || "[]");
+          setSavedFarmers(updated);
+        } catch (err) {
+          console.error("Failed to sync farmers across tabs", err);
+        }
+      }
+    };
+
+    window.addEventListener("storage", syncHandler);
+    return () => window.removeEventListener("storage", syncHandler);
+  }, []);(localStorage.getItem("farmers") || "[]");
+
+  const saveFarmerToLocal = (farmerRecord) => {
+    const updated = [...savedFarmers, farmerRecord];
+    localStorage.setItem("farmers", JSON.stringify(updated));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newId = generateUFI();
     setGeneratedUFI(newId);
+
+    // Save farmer to localStorage
+    saveFarmerToLocal({ ...farmer, ufi: newId });
   };
 
   const qrProfileUrl = generatedUFI ? `${window.location.origin}/farmer/${generatedUFI}` : "";
@@ -159,12 +201,10 @@ function Home() {
 // ------------------------------------------------------
 export default function App() {
   return (
-    // <Router>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterFarmer />} />
         <Route path="/farmer/:id" element={<FarmerProfilePage />} />
       </Routes>
-    // </Router>
   );
 }
